@@ -7,11 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * User entity
  *
- * @ApiResource(attributes={
+ * @ApiResource(iri="http://schema.org/User", attributes={
  *     "normalization_context"={"groups"={"read"}},
  *     "denormalization_context"={"groups"={"write"}}
  * })
@@ -24,15 +26,15 @@ class Users implements UserInterface, \Serializable
      *
      * @Groups("read")
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="user_id", type="integer", nullable=false)
      */
     private $userId;
 
     /**
      * @var string user nick name
      *
-     * @Groups("read")
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=15, unique=true)
      * @Assert\NotBlank
      */
@@ -47,6 +49,17 @@ class Users implements UserInterface, \Serializable
     private $password;
 
     /**
+     * @Groups("read")
+     * @ORM\OneToMany(targetEntity="Posts", mappedBy="user")
+     */
+    private $posts;
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+    }
+
+    /**
      * Returns the user id
      *
      * @return int
@@ -57,6 +70,16 @@ class Users implements UserInterface, \Serializable
     }
 
     /**
+     * Get posts by the user
+     *
+     * @return ArrayCollection
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    /**
      * Set the user name (alias nickname)
      *
      * @param string $username
@@ -64,6 +87,8 @@ class Users implements UserInterface, \Serializable
     public function setUsername($username)
     {
         $this->username = $username;
+
+        return $this;
     }
 
     /**
@@ -74,6 +99,8 @@ class Users implements UserInterface, \Serializable
     public function setPassword($password)
     {
         $this->password = $password;
+
+        return $this;
     }
 
     // user interface block
