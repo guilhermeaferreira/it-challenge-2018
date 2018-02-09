@@ -83,6 +83,7 @@ class Users implements UserInterface, \Serializable
      * Set the user name (alias nickname)
      *
      * @param string $username
+     * @return Users
      */
     public function setUsername($username)
     {
@@ -95,6 +96,7 @@ class Users implements UserInterface, \Serializable
      * Set the user password (it hashes by the event listener)
      *
      * @param $password
+     * @return Users
      */
     public function setPassword($password)
     {

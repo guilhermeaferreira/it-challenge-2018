@@ -35,6 +35,6 @@ services:
     #         $someArgument: 'some_value'
 
     AppBundle\EventListener\UsersListener:
-        autowire: true
         tags:
             - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: postPersist }

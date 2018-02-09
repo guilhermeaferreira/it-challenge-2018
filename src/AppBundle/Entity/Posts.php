@@ -44,7 +44,7 @@ class Posts
      *
      * @ORM\ManyToOne(targetEntity="Users", inversedBy="posts")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     *   @ORM\JoinColumn(name="user_id", referencedColumnName="user_id", nullable=false)
      * })
      */
     private $user;
@@ -98,6 +98,7 @@ class Posts
      * Set the post message
      *
      * @param string $message
+     * @return $this
      */
     public function setMessage($message)
     {
@@ -110,6 +111,7 @@ class Posts
      * Set the user for the post
      *
      * @param Users $user
+     * @return $this
      */
     public function setUser($user)
     {
