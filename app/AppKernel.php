@@ -18,6 +18,8 @@ class AppKernel extends Kernel
             new ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new AppBundle\AppBundle(),
+            new Avanzu\AdminThemeBundle\AvanzuAdminThemeBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -1,0 +1,96 @@
+{% extends 'AvanzuAdminThemeBundle:layout:login-layout.html.twig' %}
+
+{% block page_content %}
+    <div class="login-box">
+        <div class="login-logo">
+            IT CHALLENGE
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Register a new membership</p>
+
+            <div id="msg"></div>
+
+            <form name="form_registration">
+                <div class="form-group has-feedback">
+                    <input class="form-control" placeholder="Username" type="username" name="_username">
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input class="form-control" placeholder="Password" type="password" name="_password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <button type="submit" id="register_button" class="btn btn-primary btn-block btn-flat">Register</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+{% endblock %}
+
+{% block javascripts_inline %}
+    <script>
+        $(document).ready(function() {
+
+            // register the user
+            $("form[name=form_registration]").submit(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('api_users_post_collection') }}",
+                    dataType: 'json',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({
+                        "username": $("input[name=_username]").val(),
+                        "password": $("input[name=_password]").val()
+                    }),
+                    success: function(result) {
+                        $("#msg").html("");
+                        $("#msg").prop("class", "alert alert-success alert-dismissible");
+                        $("#msg").html("User registered! Redirecting to the main page in 3 seconds!");
+
+                        setTimeout(function(){
+                            autoLoginUser();
+                        }, 3000);
+                    },
+                    error: function(result) {
+                        $("#msg").html("");
+                        $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                        $("#msg").html(result.responseJSON.title + ": " + result.responseJSON.detail);
+                    }
+                });
+            });
+
+            // auto login the user that was registered
+            function autoLoginUser() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('app_login_page') }}",
+                    data: {
+                        "_username": $("input[name=_username]").val(),
+                        "_password": $("input[name=_password]").val()
+                    },
+                    success: function() {
+                        window.location = "{{ path('app_main_page') }}";
+                    },
+                    error: function() {
+                        $("#msg").html("");
+                        $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                        $("#msg").html(
+                            "Error with auto-login. Please try by: " +
+                            "<a href='{{ path('app_login_page') }}'> Login Page </a>"
+                        );
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

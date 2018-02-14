@@ -90,3 +90,6 @@ api_platform:
         shared_max_age: 3600
         vary: ['Content-Type', 'Authorization']
         public: true
+
+assetic:
+    use_controller: false

@@ -1,0 +1,43 @@
+{% extends 'AvanzuAdminThemeBundle:layout:login-layout.html.twig' %}
+
+{% block page_content %}
+    <div class="login-box">
+        <div class="login-logo">
+            IT CHALLENGE
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Sign in to start your session</p>
+
+            {% if error %}
+                <div class="alert alert-danger alert-dismissible">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form action="{{ path('app_login_page') }}" method="post">
+                <div class="form-group has-feedback">
+                    <input class="form-control" placeholder="Username" type="username" name="_username">
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input class="form-control" placeholder="Password" type="password" name="_password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="col-xs-8" style="margin-top:15px;">
+                    <a href="{{ path('app_register_page') }}" class="text-center">Register a new membership</a> {# @TODO -> pass the url to create a new user #}
+                </div>
+            </div>
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+{% endblock %}
