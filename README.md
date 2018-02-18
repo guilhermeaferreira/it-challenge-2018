@@ -17,7 +17,7 @@ $ docker-compose up -d
 ### References
  - [API Platform][api_platform_link] - used to build the API.
  - [AdminLTE][adminlte_link] - admin theme used for that project.
- - [Symfony] [symfony_link] - PHP framework used.
+ - [Symfony][symfony_link] - PHP framework used.
 
 ### TIPS
 
