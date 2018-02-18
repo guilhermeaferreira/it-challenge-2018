@@ -25,7 +25,7 @@ $ docker-compose up -d
 
 
 [task_pdf]: <https://github.com/guilhermeaferreira/it-challenge-2018/blob/master/task.pdf>
-[docker_compose]: <https://github.com/guilhermeaferreira/it-challenge-2018/blob/master/docker-compose.pdf>
+[docker_compose]: <https://github.com/guilhermeaferreira/it-challenge-2018/blob/master/docker-compose.yml>
 [docker_compose_more_info]: <https://docs.docker.com/compose/>
 [docker_install_link]: <https://docs.docker.com/install/>
 [api_platform_link]: <https://api-platform.com/>
