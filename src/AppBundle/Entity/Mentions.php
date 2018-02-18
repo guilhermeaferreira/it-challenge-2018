@@ -6,19 +6,25 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * Mentions entity
  *
- * @ApiResource()
+ * @ApiResource(iri="http://schema.org/Mentions", attributes={
+ *     "normalization_context"={"groups"={"read"}},
+ *     "force_eager"=false
+ * })
  * @ORM\Entity
  */
 class Mentions
 {
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Users")
+     * @ORM\ManyToOne(targetEntity="Users", inversedBy="mentions")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id", nullable=false)
+     * @Groups("read")
      */
     private $user;
 
@@ -26,13 +32,14 @@ class Mentions
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Posts")
      * @ORM\JoinColumn(name="post_id", referencedColumnName="post_id", nullable=false)
+     * @Groups("read")
      */
     private $post;
 
     /**
      * Get the user
      *
-     * @return User
+     * @return Users
      */
     public function getUser()
     {

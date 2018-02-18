@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 
 /**
@@ -15,8 +17,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ApiResource(iri="http://schema.org/User", attributes={
  *     "normalization_context"={"groups"={"read"}},
- *     "denormalization_context"={"groups"={"write"}}
+ *     "denormalization_context"={"groups"={"write"}},
+ *     "force_eager"=false
  * })
+ * @ApiFilter(SearchFilter::class, properties={"username": "partial"})
  * @ORM\Entity
  */
 class Users implements UserInterface, \Serializable
@@ -51,12 +55,28 @@ class Users implements UserInterface, \Serializable
     /**
      * @Groups("read")
      * @ORM\OneToMany(targetEntity="Posts", mappedBy="user")
+     * @ORM\OrderBy({"date" = "DESC"})
      */
     private $posts;
 
+    /**
+     * @Groups("read")
+     * @ORM\OneToMany(targetEntity="Mentions", mappedBy="user")
+     * @ORM\OrderBy({"post" = "DESC"})
+     */
+    private $mentions;
+
+    /**
+     * @Groups("read")
+     * @ORM\OneToMany(targetEntity="Followers", mappedBy="userFollowed")
+     */
+    private $followers;
+
     public function __construct()
     {
-        $this->posts = new ArrayCollection();
+        $this->posts     = new ArrayCollection();
+        $this->mentions  = new ArrayCollection();
+        $this->followers = new ArrayCollection();
     }
 
     /**
@@ -77,6 +97,26 @@ class Users implements UserInterface, \Serializable
     public function getPosts()
     {
         return $this->posts;
+    }
+
+    /**
+     * Get mentions by the user
+     *
+     * @return ArrayCollection
+     */
+    public function getMentions()
+    {
+        return $this->mentions;
+    }
+
+    /**
+     * Get followers by the user
+     *
+     * @return ArrayCollection
+     */
+    public function getFollowers()
+    {
+        return $this->followers;
     }
 
     /**

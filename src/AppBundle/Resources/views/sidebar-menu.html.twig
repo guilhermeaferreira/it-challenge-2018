@@ -1,0 +1,32 @@
+<!-- global user iri for the current user logged -->
+<input type="hidden" id="user_iri" name="user_iri" value="{{ userIri }}"/>
+
+<!-- search form -->
+<form action="#" method="get" class="sidebar-form">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Search users to follow ..." size="50"/>
+    </div>
+</form>
+<!-- /.search form -->
+
+<!-- menu -->
+<ul class="sidebar-menu tree">
+    <li>
+        <a href="{{ path('app_main_page') }}">
+            <i class="fa fa-pencil"></i>
+            <span>Write a Tweet</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('app_my_tweets_page') }}">
+            <i class="fa fa-comments"></i>
+            <span>My Tweets</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('app_my_followers_page') }}">
+            <i class="fa fa-users"></i>
+            <span>Followers</span>
+        </a>
+    </li>
+</ul>

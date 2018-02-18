@@ -1,0 +1,129 @@
+{% extends 'AvanzuAdminThemeBundle:layout:base-layout.html.twig' %}
+
+{% block javascripts %}
+    {% include '@App/javascripts.html.twig' %}
+{% endblock %}
+{% block stylesheets %}
+    {% include '@App/stylesheets.html.twig' %}
+{% endblock %}
+
+{% block title %}
+    IT CHALLENGE
+{% endblock %}
+
+{% block page_title %}
+{% endblock %}
+
+{% block page_subtitle %}
+{% endblock %}
+
+{% block avanzu_sidebar %}
+    {% include '@App/sidebar-menu.html.twig' %}
+{% endblock %}
+
+{% block avanzu_admin_header %}
+    {% include '@App/navbar-user.html.twig' %}
+{% endblock %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header">
+                    <p class="text-blue">My Tweets</p>
+                </div>
+                <div class="box-body">
+                    <ul class="timeline normal"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header">
+                    <p class="text-green">Mentioned Tweets</p>
+                </div>
+                <div class="box-body">
+                    <ul class="timeline mentions"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="msg"></div>
+
+    {% include '@App/modals.html.twig' %}
+{% endblock %}
+
+{% block javascripts_inline %}
+    <script>
+        $(document).ready(function(){
+
+            // get all tweets related with the current user logged
+            $.ajax({
+                type: "GET",
+                url: "{{ path('api_users_get_item', {'id': userId }) }}",
+                dataType: 'json',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                success: function (result) {
+                    // normal posts
+                    for (var i in result.posts) {
+                        displayPosts(result.posts[i]);
+                    }
+
+                    // mentions pots
+                    for (var i in result.mentions) {
+                        displayPosts(result.mentions[i].post, 'mentions', 'green');
+                    }
+                },
+                error: function () {
+                    $("#msg").html("");
+                    $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                    $("#msg").html(
+                        "Error occurred while trying to load your tweets."
+                        + "<br/>" +
+                        "Please try again later."
+                    );
+                }
+            });
+
+            function displayPosts(result, type, color) {
+                var type  = type || "normal";
+                var color = color || "blue";
+
+                if (result.length === 0) {
+                    return;
+                }
+
+                var postDate = new Date(result.date);
+
+                var label = '<li class="time-label">'
+                    + '<span class="bg-' + color + '">'
+                    + postDate.toDateString()
+                    + '</span>'
+                    + '</li>';
+
+                var item = '<li>'
+                    + '<i class="fa fa-comments bg-blue"></i>'
+                    + '<div class="timeline-item">'
+                    + '<span class="time">'
+                    + '<i class="fa fa-clock-o"></i> '
+                    + postDate.getHours() + ':'
+                    + postDate.getMinutes() + ':'
+                    + postDate.getSeconds()
+                    + '</span>'
+                    + '<div class="timeline-body">'
+                    + result.message
+                    + '</div>'
+                    + '</div>'
+                    + '</li>';
+
+                $("ul[class*=" + type + "]").append(
+                    label + item
+                );
+
+            }
+        });
+    </script>
+{% endblock %}

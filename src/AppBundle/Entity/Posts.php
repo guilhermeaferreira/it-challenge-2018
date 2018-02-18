@@ -5,11 +5,15 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * Post entity
  *
  * @ApiResource()
+ * @ApiFilter(OrderFilter::class, properties={"date"})
  * @ORM\Entity
  */
 class Posts
@@ -20,6 +24,7 @@ class Posts
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="post_id", type="integer", nullable=false)
+     * @Groups("read")
      */
     private $postId;
 
@@ -28,14 +33,16 @@ class Posts
      *
      * @ORM\Column(type="string", length=250)
      * @Assert\NotBlank
+     * @Groups("read")
      */
     private $message;
 
     /**
      * @var string post date
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="date", type="datetime")
      * @Assert\NotBlank
+     * @Groups("read")
      */
     private $date;
 

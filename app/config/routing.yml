@@ -1,7 +1,7 @@
 api:
     resource: '.'
     type: 'api_platform'
-    prefix: /
+    prefix: /api
 
 app:
     resource: '@AppBundle/Action/'
@@ -11,3 +11,5 @@ index:
     path: /
     defaults: { _controller: 'App\Controller\MainController::index' }
 
+logout:
+    path: /logout

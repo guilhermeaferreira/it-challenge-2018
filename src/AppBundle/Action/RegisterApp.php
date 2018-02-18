@@ -6,20 +6,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-class Application extends Controller
+class RegisterApp extends Controller
 {
     /**
      * @Route(
-     *     name="app_main_page",
-     *     path="/app",
+     *     name="app_register_page",
+     *     path="/app/register",
      *     methods={"GET"}
      * )
      */
-    public function loadTemplate()
+    public function __invoke()
     {
         return $this->render(
-            '@App/base.html.twig',
-            []
+            '@App/register.html.twig', []
         );
     }
 }

@@ -1,0 +1,72 @@
+<script src="{{ asset('bundles/avanzuadmintheme/static/prod/scripts/admin-lte-all.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bundles/app/easyautocomplete/jquery.easy-autocomplete.min.js') }}" type="text/javascript"></script>
+<script>
+    $(document).ready(function(){
+        var options = {
+            url: function(phrase) {
+                return "{{ path('api_users_get_collection') }}?username=" + phrase;
+            },
+            getValue: function (elements) {
+                if (elements.username !== "{{ userNickname }}") {
+                    return elements.username;
+                }
+            },
+            list: {
+                onClickEvent: function () {
+                    var userId = $("input[name=q]").getSelectedItemData().userId;
+                    var itemSelected = $("div[class=easy-autocomplete-container] li[class=selected] div[class=eac-item]").html();
+
+                    $("#modal-search .modal-body strong").html(itemSelected);
+                    $('#modal-search').modal();
+
+                    $("#modal-search .modal-footer button:eq(1)").click(function(){
+
+                        // let the user follow another
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ path('api_followers_post_collection') }}",
+                            dataType: 'json',
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            data: JSON.stringify({
+                                "userOriginal": $("input[name=user_iri]").val(),
+                                "userFollowed": "{{ path('api_users_get_collection') }}/" + userId
+                            }),
+                            success: function () {
+                                $("#msg").html("");
+                                $("#msg").prop("class", "alert alert-success alert-dismissible");
+                                $("#msg").html(
+                                    "You are following "
+                                    + "<strong>" + itemSelected + "</strong>"
+                                    + " now."
+                                    + " Redirecting you to follower pages in 3 seconds."
+                                );
+
+                                $('#modal-search').modal('hide');
+
+                                setTimeout(function() {
+                                    window.location = "{{ path('app_my_followers_page') }}";
+                                }, 3000);
+                            },
+                            error: function () {
+                                $("#msg").html("");
+                                $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                                $("#msg").html(
+                                    "Error occurred while trying to follow that user."
+                                    + "<br/>" +
+                                    "Please try again later."
+                                );
+
+                                $('#modal-search').modal('hide');
+                            }
+                        });
+                    });
+                }
+            },
+            highlightPhrase: false
+        };
+
+        $("input[name=q]").easyAutocomplete(options);
+    });
+</script>

@@ -1,0 +1,113 @@
+{% extends 'AvanzuAdminThemeBundle:layout:base-layout.html.twig' %}
+
+{% block javascripts %}
+    {% include '@App/javascripts.html.twig' %}
+{% endblock %}
+{% block stylesheets %}
+    {% include '@App/stylesheets.html.twig' %}
+{% endblock %}
+
+{% block title %}
+    IT CHALLENGE
+{% endblock %}
+
+{% block page_title %}
+{% endblock %}
+
+{% block page_subtitle %}
+{% endblock %}
+
+{% block avanzu_sidebar %}
+    {% include '@App/sidebar-menu.html.twig' %}
+{% endblock %}
+
+{% block avanzu_admin_header %}
+    {% include '@App/navbar-user.html.twig' %}
+{% endblock %}
+
+{% block page_content %}
+    <div class="box box-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">What are you thinking ?</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <form role="form" name="form_new_tweet">
+                <!-- textarea -->
+                <div class="form-group">
+                    <label>Post your new thoughts ...</label>
+                    <textarea id="message" name="message" class="form-control" rows="3" maxlength="250"></textarea>
+                </div>
+                <div class="form-group">
+                   <button type="submit" class="btn btn-primary btn-block btn-flat">Post it!</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+    <div id="msg"></div>
+
+    {% include '@App/modals.html.twig' %}
+{% endblock %}
+
+{% block javascripts_inline %}
+    <script>
+        $(document).ready(function(){
+
+            // add new tweet
+            $("form[name=form_new_tweet]").submit(function(e) {
+                e.preventDefault();
+
+                // validate the size of the message
+                if ($("textarea[name=message]").val().length > $("textarea[name=message]").attr('maxlength')) {
+                    $("#msg").html("");
+                    $("#msg").prop("class", "alert alert-warning alert-dismissible");
+                    $("#msg").html(
+                        "Your message has more than 250 characteres!"
+                        + "<br/>" +
+                        "Please edit it and try again."
+                    );
+                    return;
+                }
+
+                $("#msg").html(""); // always clear the message
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('api_posts_post_collection') }}",
+                    dataType: 'json',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({
+                        "message": $("textarea[name=message]").val(),
+                        "user": $("input[name=user_iri]").val()
+                    }),
+                    success: function () {
+                        $("#msg").html("");
+                        $("#msg").prop("class", "alert alert-success alert-dismissible");
+                        $("#msg").html(
+                            "Your new tweet was posted with success!"
+                            + "<br/>" +
+                            "You will be redirect to your post list in 3 seconds ..."
+                        );
+
+                        setTimeout(function() {
+                            window.location = "{{ path('app_my_tweets_page') }}";
+                        }, 3000);
+                    },
+                    error: function () {
+                        $("#msg").html("");
+                        $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                        $("#msg").html(
+                            "Error occurred while trying to add your new tweet post."
+                            + "<br/>" +
+                            "Please try again later."
+                        );
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'AvanzuAdminThemeBundle:layout:base-layout.html.twig' %}
+
+{% block javascripts %}
+    {% include '@App/javascripts.html.twig' %}
+{% endblock %}
+{% block stylesheets %}
+    {% include '@App/stylesheets.html.twig' %}
+{% endblock %}
+
+{% block title %}
+    IT CHALLENGE
+{% endblock %}
+
+{% block page_title %}
+{% endblock %}
+
+{% block page_subtitle %}
+{% endblock %}
+
+{% block avanzu_sidebar %}
+    {% include '@App/sidebar-menu.html.twig' %}
+{% endblock %}
+
+{% block avanzu_admin_header %}
+    {% include '@App/navbar-user.html.twig' %}
+{% endblock %}
+
+{% block page_content %}
+    <div class="row" id="list-followers"></div>
+
+    <div id="msg"></div>
+
+    {% include '@App/modals.html.twig' %}
+{% endblock %}
+
+{% block javascripts_inline %}
+    <script>
+        $(document).ready(function(){
+
+            // get all users that the current user is following
+            $.ajax({
+                type: "GET",
+                url: "{{ path('api_followers_get_collection') }}?userOriginal={{ userId }}",
+                dataType: 'json',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                success: function (result) {
+                    // if no followers, message ...
+                    if (result.length === 0) {
+                        $("#list-followers").append(
+                          '<div class="box">'
+                            + '<div class="box-body">'
+                                + '<div class="alert alert-warning alert-dismissible">'
+                                + '<h4><i class="icon fa fa-warning"></i> Alert!</h4>'
+                                + 'Currently, you are following nobody!'
+                                + '</div>'
+                            + '</div>'
+                          + '</div>'
+                        );
+                    }
+
+                    for (var i in result) {
+                        displayFollowers(result[i].userFollowed);
+                    }
+
+                    bindDeleteFollower();
+                },
+                error: function () {
+                    $("#msg").html("");
+                    $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                    $("#msg").html(
+                        "Error occurred while trying to load followers."
+                        + "<br/>" +
+                        "Please try again later."
+                    );
+                }
+            });
+
+            function displayFollowers(result) {
+                if (result.length === 0) {
+                    return;
+                }
+
+                var item = '<div class="col-md-4" id="col-' + result.userId + '">'
+                    + '<div class="box box-widget widget-user-2">'
+                        + '<div class="widget-user-header bg-blue">'
+                            + '<h3 class="widget-user-username">' + result.username + '</h3>'
+                        + '</div>'
+                        + '<div class="box-footer no-padding">'
+                            + '<ul class="nav nav-stacked">'
+                                + '<li>'
+                                    + '<a href="#">Posts <span class="pull-right badge bg-blue">' + result.posts.length + '</span></a>'
+                                + '</li>'
+                                + '<li>'
+                                    + '<a href="#" data-id="' + result.userId + '" data-username="' + result.username + '" id="unfollow">'
+                                        + '<span>Unfollow</span>'
+                                        + '<span class="pull-right"><i class="fa fa-user-times"></i></span>'
+                                    + '</a>'
+                                + '</li>'
+                            + '</ul>'
+                        + '</div>'
+                    + '</div>';
+
+                $("#list-followers").append(item);
+            }
+
+            function bindDeleteFollower() {
+                // remove the follower
+                $("a[id*=unfollow]").click(function(){
+
+                    var userFollwedId       = $(this).data("id");
+                    var userFollwedUsername = $(this).data("username");
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ path('api_followers_get_collection') }}/"
+                            + 'userOriginal={{ userId }}'
+                            + ';userFollowed=' + userFollwedId,
+                        dataType: 'json',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        success: function () {
+                            $("#msg").html("");
+                            $("#msg").prop("class", "alert alert-success alert-dismissible");
+                            $("#msg").html(
+                                "Your unfollowed <strong>" + userFollwedUsername  + "</strong> with success!"
+                            );
+
+                            $("#col-" + userFollwedId).hide();
+                        },
+                        error: function () {
+                            $("#msg").html("");
+                            $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                            $("#msg").html(
+                                "Error occurred while trying to remove the follower."
+                                + "<br/>" +
+                                "Please try again later."
+                            );
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+{% endblock %}

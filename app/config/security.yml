@@ -26,6 +26,10 @@ security:
             form_login:
                 login_path: app_login_page
                 check_path: app_login_page
+                default_target_path: app_main_page
+            logout:
+                path: /logout
+                target: app_login_page
             # activate different ways to authenticate
 
             # http_basic: ~
