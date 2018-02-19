@@ -49,16 +49,28 @@
                                     window.location = "{{ path('app_my_followers_page') }}";
                                 }, 3000);
                             },
-                            error: function () {
-                                $("#msg").html("");
-                                $("#msg").prop("class", "alert alert-danger alert-dismissible");
-                                $("#msg").html(
-                                    "Error occurred while trying to follow that user."
-                                    + "<br/>" +
-                                    "Please try again later."
-                                );
+                            error: function (result) {
+                                // following duplicated
+                                if (result.status === 400) {
+                                    $("#msg").html("");
+                                    $("#msg").prop("class", "alert alert-warning alert-dismissible");
+                                    $("#msg").html(
+                                        "You are already following that user."
+                                    );
+                                    $('#modal-search').modal('hide');
 
-                                $('#modal-search').modal('hide');
+                                // other errors
+                                } else {
+
+                                    $("#msg").html("");
+                                    $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                                    $("#msg").html(
+                                        "Error occurred while trying to follow that user."
+                                        + "<br/>" +
+                                        "Please try again later."
+                                    );
+                                    $('#modal-search').modal('hide');
+                                }
                             }
                         });
                     });

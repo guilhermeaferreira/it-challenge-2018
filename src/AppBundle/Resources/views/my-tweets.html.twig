@@ -40,6 +40,16 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header">
+                    <p class="text-yellow">Followers Tweets</p>
+                </div>
+                <div class="box-body">
+                    <ul class="timeline followers"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header">
                     <p class="text-green">Mentioned Tweets</p>
                 </div>
                 <div class="box-body">
@@ -88,12 +98,52 @@
                 }
             });
 
-            function displayPosts(result, type, color) {
-                var type  = type || "normal";
-                var color = color || "blue";
+            // get the tweets from guys that I am following
+            $.ajax({
+                type: "GET",
+                url: "{{ path('api_followers_get_collection') }}?userOriginal={{ userId }}",
+                dataType: 'json',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                success: function (result) {
+                    for (var i in result) {
+                        for (var j in result[i].userFollowed.posts) {
+                            displayPosts(
+                                result[i].userFollowed.posts[j],
+                                'followers',
+                                'yellow',
+                                result[i].userFollowed.username
+                            );
+                        }
+                    }
+                },
+                error: function () {
+                    $("#msg").html("");
+                    $("#msg").prop("class", "alert alert-danger alert-dismissible");
+                    $("#msg").html(
+                        "Error occurred while trying to load followers tweets."
+                        + "<br/>" +
+                        "Please try again later."
+                    );
+                }
+            });
+
+            function displayPosts(result, type, color, follower) {
+                var type     = type || "normal";
+                var color    = color || "blue";
+                var follower = follower || "";
 
                 if (result.length === 0) {
                     return;
+                }
+
+                var timelineHeader = '';
+                if (follower !== "") {
+                    timelineHeader = '<h3 class="timeline-header">'
+                        + '<a href="#">' + follower + '</a> '
+                        + 'commented on this post'
+                        + '</h3>';
                 }
 
                 var postDate = new Date(result.date);
@@ -113,6 +163,7 @@
                     + postDate.getMinutes() + ':'
                     + postDate.getSeconds()
                     + '</span>'
+                    + timelineHeader
                     + '<div class="timeline-body">'
                     + result.message
                     + '</div>'
