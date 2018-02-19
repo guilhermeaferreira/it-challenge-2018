@@ -14,6 +14,10 @@ As soon as you get both configured properly, you just have to run the following 
 $ docker-compose up -d
 ```
 
+To access the APP just follow the [application link][app_link]
+
+The [API documentation][api_doc_link] provided by API Platform with Swagger is available by the localhost URI.
+
 ### References
  - [API Platform][api_platform_link] - used to build the API.
  - [AdminLTE][adminlte_link] - admin theme used for that project.
@@ -31,3 +35,5 @@ $ docker-compose up -d
 [api_platform_link]: <https://api-platform.com/>
 [adminlte_link]: <https://adminlte.io/>
 [symfony_link]: <https://symfony.com/>
+[app_link]: <http://localhost/app>
+[api_doc_link]: <http://localhost>
