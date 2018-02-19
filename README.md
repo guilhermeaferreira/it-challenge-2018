@@ -18,6 +18,17 @@ To access the APP just follow the [application link][app_link]
 
 The [API documentation][api_doc_link] provided by API Platform with Swagger is available by the localhost URI.
 
+### Database
+
+Either you run the command following command inside the app container
+
+```sh
+ bin/console doctrine:schema:update --force
+
+```
+
+Or just [import the clean database][link_db] from that repository.
+
 ### References
  - [API Platform][api_platform_link] - used to build the API.
  - [AdminLTE][adminlte_link] - admin theme used for that project.
@@ -37,3 +48,4 @@ The [API documentation][api_doc_link] provided by API Platform with Swagger is a
 [symfony_link]: <https://symfony.com/>
 [app_link]: <http://localhost/app>
 [api_doc_link]: <http://localhost>
+[link_db]: <https://github.com/guilhermeaferreira/it-challenge-2018/blob/master/test_db.sql>
